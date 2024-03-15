@@ -4,13 +4,14 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # You made this? I made this :)
 import pygame
 import threading
 import mutagen.mp3
+import random
 
 class CrosswalkController:
     def __init__(self):
         self.timer_called = False
         try:
             self.init_gpio()
-            self.play_music("ambiance_1.mp3")
+            self.play_random_ambiance()
             self.hang()
         finally:
             self.cleanup()
@@ -32,6 +33,16 @@ class CrosswalkController:
         pygame.mixer.music.load(song)
         pygame.mixer.music.play()
 
+    def play_random_ambiance(self):
+        ambiance = ["ambiance_1.mp3", "ambiance_2.mp3", "ambiance_3.mp3"]
+        song = random.choice(ambiance)
+        print(f"Playing {song}")
+        song = "sound/" + song
+        mp3 = mutagen.mp3.MP3(song)
+        pygame.mixer.init(frequency=mp3.info.sample_rate)
+        pygame.mixer.music.load(song)
+        pygame.mixer.music.play(loops=-1)
+
     def stop_music(self):
         pygame.mixer.music.stop()
         print("Stopping song")
@@ -47,10 +58,10 @@ class CrosswalkController:
         GPIO.output(20, GPIO.LOW)
 
     def car_timer_callback(self):
-        threading.Timer(10, self.idle_timer_callback).start()
+        threading.Timer(5, self.idle_timer_callback).start()
         self.print("You should not cross!")
         GPIO.output(20, GPIO.HIGH)
-        self.play_music("ambiance_1.mp3")
+        self.play_random_ambiance()
 
     def idle_timer_callback(self):
         self.timer_called = False
