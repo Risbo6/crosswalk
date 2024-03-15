@@ -50,22 +50,22 @@ class CrosswalkController:
     def waiting_timer_callback(self):
         threading.Timer(9, self.crossing_timer_callback).start()
         self.print("Wow a car has stopped!")
-        self.play_music("voiture_arret_depart_crop.mp3")
+        self.play_music("voiture_arret_depart_long.mp3")
 
     def crossing_timer_callback(self):
-        threading.Timer(8, self.car_timer_callback).start()
+        threading.Timer(14, self.car_timer_callback).start()
         self.print("You should cross.")
         GPIO.output(20, GPIO.LOW)
 
     def car_timer_callback(self):
-        threading.Timer(5, self.idle_timer_callback).start()
+        threading.Timer(10, self.idle_timer_callback).start()
         self.print("You should not cross!")
         GPIO.output(20, GPIO.HIGH)
-        self.play_random_ambiance()
 
     def idle_timer_callback(self):
         self.timer_called = False
         self.print("Traffic light has finished its break, you can press the button again.")
+        self.play_random_ambiance()
 
     def GPIO_callback(self, channel):
         if GPIO.input(channel) == GPIO.HIGH:
